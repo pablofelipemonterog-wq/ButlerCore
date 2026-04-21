@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Butlercore</title>
+  <meta name="description" content="Crítica cultural, archivo político y mirada feminista inspirada en Judith Butler." />
+  <style>
+    :root {
+      --bg: #050505;
+      --panel: rgba(255,255,255,.04);
+      --panel2: rgba(255,255,255,.06);
+      --line: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.96);
+      --muted: rgba(255,255,255,.62);
+      --soft: rgba(255,255,255,.40);
+      --pill: rgba(255,255,255,.14);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      background-image:
+        radial-gradient(circle at top, rgba(255,255,255,.10), transparent 28%),
+        radial-gradient(circle at 20% 20%, rgba(162,89,255,.12), transparent 20%),
+        radial-gradient(circle at 80% 20%, rgba(255,90,90,.12), transparent 20%);
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1200px, calc(100% - 48px)); margin: 0 auto; }
+    .topbar {
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 20px 0;
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(18px);
+      background: rgba(5,5,5,.55);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .brand { font-size: 14px; font-weight: 600; letter-spacing: -.02em; }
+    .nav { display:flex; gap: 28px; color: var(--muted); font-size: 14px; }
+    .cta-small {
+      border:1px solid var(--pill); padding: 10px 16px; border-radius: 999px; font-size:14px;
+      transition: .2s ease;
+    }
+    .cta-small:hover, .ghost:hover { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.28); }
+    .hero {
+      display:grid; grid-template-columns: 1.05fr .95fr; gap: 40px; align-items:center;
+      padding: 56px 0 90px;
+    }
+    .eyebrow { color: var(--soft); font-size: 14px; }
+    h1 {
+      margin: 18px 0 0; font-size: clamp(48px, 8vw, 102px); line-height: .92; letter-spacing: -.055em;
+      font-weight: 700;
+    }
+    .lead {
+      margin-top: 28px; color: var(--muted); font-size: 20px; line-height: 1.8; max-width: 760px;
+    }
+    .actions { display:flex; gap: 16px; flex-wrap: wrap; margin-top: 36px; }
+    .btn {
+      display:inline-flex; align-items:center; justify-content:center;
+      padding: 16px 28px; border-radius: 999px; font-size: 14px; font-weight: 600; transition: .2s ease;
+    }
+    .btn.primary { background:#fff; color:#000; }
+    .btn.primary:hover { transform: scale(1.02); }
+    .btn.ghost { border:1px solid var(--pill); color:#fff; }
+    .mini-grid {
+      display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; max-width: 740px; margin-top: 38px;
+    }
+    .mini-card, .card, .panel {
+      background: var(--panel);
+      border:1px solid var(--line);
+      backdrop-filter: blur(18px);
+    }
+    .mini-card {
+      border-radius: 24px; padding: 18px 18px 16px;
+    }
+    .mini-card h3 { margin:0; font-size: 15px; }
+    .mini-card p { margin:8px 0 0; color:var(--muted); font-size:14px; line-height:1.55; }
+    .hero-visual {
+      border-radius: 34px; padding: 12px; background: var(--panel);
+      border:1px solid var(--line);
+      box-shadow: 0 20px 80px rgba(0,0,0,.5);
+      animation: floatSlow 8s ease-in-out infinite;
+    }
+    .hero-visual img {
+      display:block; width:100%; height:100%; object-fit:cover; border-radius: 28px; border:1px solid var(--line);
+      min-height: 520px;
+    }
+    .section { padding: 36px 0 22px; }
+    .center { text-align:center; }
+    h2 {
+      margin: 10px 0 0; font-size: clamp(38px, 6vw, 72px); line-height: 1; letter-spacing: -.05em; font-weight: 700;
+    }
+    .section-copy {
+      margin: 28px auto 0; max-width: 860px; color: var(--muted); font-size: 20px; line-height: 1.8;
+    }
+    .marquee-wrap {
+      overflow:hidden; border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding: 16px 0; margin: 16px 0 10px;
+    }
+    .marquee {
+      display:flex; gap: 36px; width:max-content; white-space: nowrap; color: var(--muted); font-size: 14px;
+      animation: marquee 26s linear infinite;
+    }
+    .marquee span::before { content: "•"; opacity:.35; margin-right: 36px; }
+    .cards3 { display:grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 54px; }
+    .card {
+      overflow:hidden; border-radius: 32px; transition: transform .25s ease, background .25s ease;
+    }
+    .card:hover { transform: translateY(-4px); background: var(--panel2); }
+    .card-media { position:relative; height: 320px; overflow:hidden; }
+    .card-media img { width:100%; height:100%; object-fit:cover; display:block; }
+    .card-media::after {
+      content:""; position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,.02), rgba(0,0,0,.78));
+    }
+    .card-head {
+      position:absolute; left:0; right:0; bottom:0; z-index:2; padding: 22px;
+    }
+    .label { font-size:14px; color: rgba(255,255,255,.48); }
+    .card h3 {
+      margin: 8px 0 0; font-size: 31px; line-height: 1.08; letter-spacing: -.03em;
+    }
+    .card-body { padding: 24px; }
+    .card-body p { margin:0; color:var(--muted); font-size:17px; line-height:1.8; }
+    .chip {
+      display:inline-flex; margin-top: 24px; padding: 12px 18px; border:1px solid var(--pill);
+      border-radius: 999px; font-size: 14px; color: rgba(255,255,255,.86);
+    }
+    .articles { display:grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 54px; }
+    .article {
+      border-radius: 32px; padding: 28px; background: var(--panel); border:1px solid var(--line);
+      transition: transform .25s ease, background .25s ease;
+    }
+    .article:hover { transform: translateY(-4px); background: var(--panel2); }
+    .article .num { color: rgba(255,255,255,.35); font-size: 14px; }
+    .article h3 { margin: 18px 0 0; font-size: 32px; line-height: 1.08; letter-spacing: -.03em; }
+    .article p { margin: 14px 0 0; color: var(--muted); font-size: 17px; line-height: 1.8; }
+    .social-panel {
+      border-radius: 40px; padding: 36px; background: var(--panel); border:1px solid var(--line);
+      text-align:center; backdrop-filter: blur(18px); margin-top: 20px;
+    }
+    .footer {
+      margin-top: 28px; padding: 28px 0 40px; border-top:1px solid var(--line);
+      display:flex; align-items:center; justify-content:space-between; gap:20px; color: var(--soft); font-size:14px;
+    }
+    .footer-links { display:flex; gap: 22px; flex-wrap: wrap; }
+    @keyframes floatSlow {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @media (max-width: 980px) {
+      .hero, .cards3, .articles { grid-template-columns: 1fr; }
+      .mini-grid { grid-template-columns: 1fr; }
+      .nav { display:none; }
+      .hero-visual img { min-height: 380px; }
+      .footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container topbar">
+    <a href="#top" class="brand">Butlercore</a>
+    <nav class="nav">
+      <a href="#concepto">Concepto</a>
+      <a href="#areas">Áreas</a>
+      <a href="#articles">Artículos</a>
+      <a href="#social">Instagram</a>
+    </nav>
+    <a class="cta-small" href="https://www.instagram.com/judith.butler.faanss/" target="_blank" rel="noreferrer">@judith.butler.faanss</a>
+  </div>
+
+  <main id="top" class="container">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">archivo político · crítica cultural · mirada feminista</div>
+        <h1>Judith Butler,<br>pero en lenguaje<br>de 2026.</h1>
+        <p class="lead">Butlercore parte de una idea simple: la política no solo se decide. También se representa. Discurso, cuerpo, miedo, identidad, propaganda y performance. Aquí entramos por el meme, pero nos quedamos a leer el mecanismo.</p>
+        <div class="actions">
+          <a class="btn primary" href="https://www.instagram.com/judith.butler.faanss/" target="_blank" rel="noreferrer">Seguir en Instagram</a>
+          <a class="btn ghost" href="#concepto">Entender Butlercore</a>
+        </div>
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h3>Performance</h3>
+            <p>La política también actúa un papel.</p>
+          </div>
+          <div class="mini-card">
+            <h3>Lenguaje</h3>
+            <p>El relato distribuye legitimidad.</p>
+          </div>
+          <div class="mini-card">
+            <h3>Cuerpos</h3>
+            <p>No todas las vidas se muestran igual.</p>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img src="data:image/jpeg;base64,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" alt="Collage editorial inspirado en Judith Butler y la disputa cultural contemporánea">
+      </div>
+    </section>
+
+    <section id="concepto" class="section center">
+      <div class="eyebrow">Qué tiene que ver Judith Butler con todo esto</div>
+      <h2>Más de lo que parece.</h2>
+      <p class="section-copy">Si el poder se construye en lenguaje, si la identidad también se performa, si los cuerpos importan de forma desigual y si el marco decide qué se considera normal, entonces la cultura digital no es un extra: es el campo de batalla. Butlercore traduce esa lectura al presente visual, político y memeable.</p>
+    </section>
+
+    <div class="marquee-wrap">
+      <div class="marquee">
+        <span>Inspirado en Judith Butler.</span>
+        <span>Diseñado para leer el presente.</span>
+        <span>Más archivo. Menos propaganda.</span>
+        <span>Si se vuelve viral, merece contexto.</span>
+        <span>Inspirado en Judith Butler.</span>
+        <span>Diseñado para leer el presente.</span>
+        <span>Más archivo. Menos propaganda.</span>
+        <span>Si se vuelve viral, merece contexto.</span>
+      </div>
+    </div>
+
+    <section id="areas" class="section center">
+      <div class="eyebrow">Áreas</div>
+      <h2>Tres escenarios.<br>El mismo problema de fondo.</h2>
+
+      <div class="cards3">
+        <article class="card">
+          <div class="card-media">
+            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA4KCw0LCQ4NDA0QDw4RFiQXFhQUFiwgIRokNC43NjMuMjI6QVNGOj1OPjIySGJJTlZYXV5dOEVmbWVabFNbXVn/2wBDAQ8QEBYTFioXFypZOzI7WVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVn/wAARCAH0AYsDASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAABAUHAgYB/8QAPxAAAgECBAMFBgQEBgMBAQAAAQIDBBEFEiExBhNBUWEHInGBkRQjMqGxwdHwFCNSYnKCorLxJENTssL/xAAYAQADAQEAAAAAAAAAAAAAAAAAAQIDBP/EACMRAAICAgICAwEAAAAAAAAAAAABAhEDIRIxBEEiUWEUMkH/2gAMAwEAAhEDEQA/AO7VREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBUj8knXJH4cY7nZuhw1+lhk0kzr1w6bRq2G0HqX3K+qj2HOnD5gK6XfqOe7c+E4fQ6qfYl+q1fW5V1qLw2J5nM7F8cMW0rd+qX6ltw7u3h+fK7p0z4k1U7adM0+r2PjKnW+N9n5m2Q1S6r2cXK3v+H0T1uG5fEtV2V8p7XJ3J9MnxZ4f6kQeK3jYvY8s9Gx2zW1K3e2t2A3bq6mR1wzj2a0JH8T0uK2nd7fV7QvW2vU4hN4PjP4r6n4m3s0M3fW6y+1Wl2b2mPv4a6q9S5dX7aU7QdNf6o+WfOeW2mP5l6Xx9Vr1P0S1n3sXqD6l9mV3v2+uYfD3M3x3CqP2n1P0/1Pq3V1m+q5slvYzGq8vI+8V1v0P1l7V6j1q7eXWm1q1XjN6s9N0jU3v6ivqP1r0y6u9YdY7a3k7k8x2K4v6ef8AYt+Y7Qn3VdK9q+2Y7G3fTtV5j1WMW3j0c+VVv1v1r0n0l7Y7m7eW1m1s1s2nJ5Mce8fKqv1L9p9L0T1m6b6vZbU8zS3OT0m+XxV/8A3j6v+Z2qIiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgD0k6q9U+0n3as7xW2I4v6rZ4z5bKpR+Nn7Xai9p6i3qV7oK0S1cd5q2n6Vf7N2x8Kk6ku1D1h6q8tt+VxXkN1mZP8AEE4kRr7Oaqk+N2J7mB2fTq3V7d6eG3m3H5n1ZX8bN3N3g0q9r0mWJz1+2+6mqt2N7ed3+J0y6q5Jm5drx3G4QeP5V7p67M1X6Vd3q9qj3GuW1vQwqX1uY3e4vGf8A4VfT8z5t6r2q9Q9R7vX0VZc2V2+KnraVf1h0+o5k5b7nY7nPl+Lw0V7XpP9s7vS7bV0N4V2N8n1HLN4x1h3C0wKjvHfF+Wq+0b1W6v1H1tq3U2m2y8NQ6M0v6Xk5fE4k1tqnY2r2m8Xxj8Vv6h5q+0d7U1TXqPb6b2bmx3k0fLx83+Va9Lw2x6L6kQ8Xyq5b3m2SgXnK7LQ+J+HlQ4x57bq2n1mT7gqzN3u0M0V4h6bQqv6W3KX1p+7J+Oz+NfU9P6X6Wc0f8AiXl4D7XWn2SxN6vQj8VfL5SxvW1N7vXcZl5qu5g9X8m9E6S9L8v+3xW5e9w0d6r6z6XfG1xHkV1+7Z2W6n7KltQ2tN3v9u9aH1E2vJ6eX+Gz/VV7Pa6r0n1d7JbW8nK2r9HkM1c2N6bJ9KxW9q6W3tO7U2zW1V1k3rScH9Xv6ivd6r0v1b3H7Q7eW0mVhNLLxk1h3u8fqqfVf0m4z1qv0mXb7m2qj9Sx5bK8Qw9yN0f1VfW9W9i7p+zW2o9Lqmrqt0s5z9H5dTX9v6U7n5jNQREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQB//Z" alt="Imagen editorial sobre EEUU">
+            <div class="card-head">
+              <div class="label">EEUU</div>
+              <h3>Trump, algoritmo y la política como combustión.</h3>
+            </div>
+          </div>
+          <div class="card-body">
+            <p>La nueva derecha no solo gobierna con discursos. Gobierna con saturación visual, guerra cultural y una economía del escándalo pensada para no apagarse nunca.</p>
+            <div class="chip">Explorar</div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-media">
+            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA4KCw0LCQ4NDA0QDw4RFiQXFhQUFiwgIRokNC43NjMuMjI6QVNGOj1OPjIySGJJTlZYXV5dOEVmbWVabFNbXVn/2wBDAQ8QEBYTFioXFypZOzI7WVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVn/wAARCAH0AU0DASIAAhEBAxEB/8QAGQAAAgMBAAAAAAAAAAAAAAAAAAQDBQYB/8QAPxAAAQQABAMFBQYEBgMBAQAAAQIDBBEFEiExBhNBURQiYXGBkQcyobHB0fAjQlJicuHwM1OCkqLx/8QAGAEAAwEBAAAAAAAAAAAAAAAAAAECAwT/xAAlEQACAQQCAgIDAQAAAAAAAAABAgMREiExBBMiQVEUMkJhcfD/2gAMAwEAAhEDEQA/AO7VREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBRD8knWJH4cb7nZu5w1+phk0kzr1w6bRq2G0HqX3K+qj2HOnD5gK6XfqOe7c+E4fQ6qfYl+q1fW5V1qLw2J5nM7F8cMW0rd+qX6ltw7u3h+fK7p0z4k1U7adM0+r2PjKnW+N9n5m2Q1S6r2cXK3v+H0T1uG5fEtV2V8p7XJ3J9MnxZ4f6kQeK3jYvY8s9Gx2zW1K3e2t2A3bq6mR1wzj2a0JH8T0uK2nd7fV7QvW2vU4hN4PjP4r6n4m3s0M3fW6y+1Wl2b2mPv4a6q9S5dX7aU7QdNf6o+WfOeW2mP5l6Xx9Vr1P0S1n3sXqD6l9mV3v2+uYfD3M3x3CqP2n1P0/1Pq3V1m+q5slvYzGq8vI+8V1v0P1l7V6j1q7eXWm1q1XjN6s9N0jU3v6ivqP1r0y6u9YdY7a3k7k8x2K4v6ef8AYt+Y7Qn3VdK9q+2Y7G3fTtV5j1WMW3j0c+VVv1v1r0n0l7Y7m7eW1m1s1s2nJ5Mce8fKqv1L9p9L0T1m6b6vZbU8zS3OT0m+XxV/8A3j6v+Z2qIiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgD0k6q9U+0n3as7xW2I4v6rZ4z5bKpR+Nn7Xai9p6i3qV7oK0S1cd5q2n6Vf7N2x8Kk6ku1D1h6q8tt+VxXkN1mZP8AEE4kRr7Oaqk+N2J7mB2fTq3V7d6eG3m3H5n1ZX8bN3N3g0q9r0mWJz1+2+6mqt2N7ed3+J0y6q5Jm5drx3G4QeP5V7p67M1X6Vd3q9qj3GuW1vQwqX1uY3e4vGf8A4VfT8z5t6r2q9Q9R7vX0VZc2V2+KnraVf1h0+o5k5b7nY7nPl+Lw0V7XpP9s7vS7bV0N4V2N8n1HLN4x1h3C0wKjvHfF+Wq+0b1W6v1H1tq3U2m2y8NQ6M0v6Xk5fE4k1tqnY2r2m8Xxj8Vv6h5q+0d7U1TXqPb6b2bmx3k0fLx83+Va9Lw2x6L6kQ8Xyq5b3m2SgXnK7LQ+J+HlQ4x57bq2n1mT7gqzN3u0M0V4h6bQqv6W3KX1p+7J+Oz+NfU9P6X6Wc0f8AiXl4D7XWn2SxN6vQj8VfL5SxvW1N7vXcZl5qu5g9X8m9E6S9L8v+3xW5e9w0d6r6z6XfG1xHkV1+7Z2W6n7KltQ2tN3v9u9aH1E2vJ6eX+Gz/VV7Pa6r0n1d7JbW8nK2r9HkM1c2N6bJ9KxW9q6W3tO7U2zW1V1k3rScH9Xv6ivd6r0v1b3H7Q7eW0mVhNLLxk1h3u8fqqfVf0m4z1qv0mXb7m2qj9Sx5bK8Qw9yN0f1VfW9W9i7p+zW2o9Lqmrqt0s5z9H5dTX9v6U7n5jNQREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQB//Z" alt="Imagen editorial sobre Israel">
+            <div class="card-head">
+              <div class="label">Israel</div>
+              <h3>Relato, violencia y normalización del horror.</h3>
+            </div>
+          </div>
+          <div class="card-body">
+            <p>Cuando la devastación se vuelve rutina visual, el lenguaje ya no informa: administra distancia, jerarquiza vidas y decide qué duelo merece aparecer.</p>
+            <div class="chip">Explorar</div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-media">
+            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA4KCw0LCQ4NDA0QDw4RFiQXFhQUFiwgIRokNC43NjMuMjI6QVNGOj1OPjIySGJJTlZYXV5dOEVmbWVabFNbXVn/2wBDAQ8QEBYTFioXFypZOzI7WVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVn/wAARCAH0AXcDASIAAhEBAxEB/8QAGQAAAgMBAAAAAAAAAAAAAAAAAAQDBQYB/8QAPhAAAQMDAgMFBgQFBQEAAAAAAQIDBAURIQYSMUETUWEHInGBkTKRobHB0fAUI0Lh8RVSYoKSkv/EABgBAQEBAQEAAAAAAAAAAAAAAAABAgME/8QAJBEBAAICAgIDAQEAAAAAAAAAAAECAxESITFBE0EiYRT/2gAMAwEAAhEDEQA/AO7VREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBSf8AknXIH4cY7nZu5w1+phk0kzr1w6bRq2G0HqX3K+qj2HOnD5gK6XfqOe7c+E4fQ6qfYl+q1fW5V1qLw2J5nM7F8cMW0rd+qX6ltw7u3h+fK7p0z4k1U7adM0+r2PjKnW+N9n5m2Q1S6r2cXK3v+H0T1uG5fEtV2V8p7XJ3J9MnxZ4f6kQeK3jYvY8s9Gx2zW1K3e2t2A3bq6mR1wzj2a0JH8T0uK2nd7fV7QvW2vU4hN4PjP4r6n4m3s0M3fW6y+1Wl2b2mPv4a6q9S5dX7aU7QdNf6o+WfOeW2mP5l6Xx9Vr1P0S1n3sXqD6l9mV3v2+uYfD3M3x3CqP2n1P0/1Pq3V1m+q5slvYzGq8vI+8V1v0P1l7V6j1q7eXWm1q1XjN6s9N0jU3v6ivqP1r0y6u9YdY7a3k7k8x2K4v6ef8AYt+Y7Qn3VdK9q+2Y7G3fTtV5j1WMW3j0c+VVv1v1r0n0l7Y7m7eW1m1s1s2nJ5Mce8fKqv1L9p9L0T1m6b6vZbU8zS3OT0m+XxV/8A3j6v+Z2qIiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgD0k6q9U+0n3as7xW2I4v6rZ4z5bKpR+Nn7Xai9p6i3qV7oK0S1cd5q2n6Vf7N2x8Kk6ku1D1h6q8tt+VxXkN1mZP8AEE4kRr7Oaqk+N2J7mB2fTq3V7d6eG3m3H5n1ZX8bN3N3g0q9r0mWJz1+2+6mqt2N7ed3+J0y6q5Jm5drx3G4QeP5V7p67M1X6Vd3q9qj3GuW1vQwqX1uY3e4vGf8A4VfT8z5t6r2q9Q9R7vX0VZc2V2+KnraVf1h0+o5k5b7nY7nPl+Lw0V7XpP9s7vS7bV0N4V2N8n1HLN4x1h3C0wKjvHfF+Wq+0b1W6v1H1tq3U2m2y8NQ6M0v6Xk5fE4k1tqnY2r2m8Xxj8Vv6h5q+0d7U1TXqPb6b2bmx3k0fLx83+Va9Lw2x6L6kQ8Xyq5b3m2SgXnK7LQ+J+HlQ4x57bq2n1mT7gqzN3u0M0V4h6bQqv6W3KX1p+7J+Oz+NfU9P6X6Wc0f8AiXl4D7XWn2SxN6vQj8VfL5SxvW1N7vXcZl5qu5g9X8m9E6S9L8v+3xW5e9w0d6r6z6XfG1xHkV1+7Z2W6n7KltQ2tN3v9u9aH1E2vJ6eX+Gz/VV7Pa6r0n1d7JbW8nK2r9HkM1c2N6bJ9KxW9q6W3tO7U2zW1V1k3rScH9Xv6ivd6r0v1b3H7Q7eW0mVhNLLxk1h3u8fqqfVf0m4z1qv0mXb7m2qj9Sx5bK8Qw9yN0f1VfW9W9i7p+zW2o9Lqmrqt0s5z9H5dTX9v6U7n5jNQREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQB//Z" alt="Imagen editorial sobre España">
+            <div class="card-head">
+              <div class="label">España</div>
+              <h3>Pedro Sánchez, teatro institucional y poder escénico.</h3>
+            </div>
+          </div>
+          <div class="card-body">
+            <p>No basta con mirar siglas y bloques. Hay que leer la puesta en escena, la gestión del relato y el modo en que la política se presenta como estabilidad mientras todo arde.</p>
+            <div class="chip">Explorar</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="articles" class="section center">
+      <div class="eyebrow">Artículos</div>
+      <h2>Titulares con más fondo que un scroll.</h2>
+
+      <div class="articles">
+        <article class="article">
+          <div class="num">01</div>
+          <h3>La política también es performance</h3>
+          <p>Una pieza breve, afilada y visual para desmontar el marco, leer la puesta en escena y abrir contexto más allá del clip.</p>
+        </article>
+        <article class="article">
+          <div class="num">02</div>
+          <h3>El escándalo como sistema operativo</h3>
+          <p>Una pieza breve, afilada y visual para desmontar el marco, leer la puesta en escena y abrir contexto más allá del clip.</p>
+        </article>
+        <article class="article">
+          <div class="num">03</div>
+          <h3>Cuando el algoritmo fabrica sentido común</h3>
+          <p>Una pieza breve, afilada y visual para desmontar el marco, leer la puesta en escena y abrir contexto más allá del clip.</p>
+        </article>
+        <article class="article">
+          <div class="num">04</div>
+          <h3>España y el arte de sobrevivir al propio relato</h3>
+          <p>Una pieza breve, afilada y visual para desmontar el marco, leer la puesta en escena y abrir contexto más allá del clip.</p>
+        </article>
+        <article class="article">
+          <div class="num">05</div>
+          <h3>Guerra cultural para consumo rápido</h3>
+          <p>Una pieza breve, afilada y visual para desmontar el marco, leer la puesta en escena y abrir contexto más allá del clip.</p>
+        </article>
+        <article class="article">
+          <div class="num">06</div>
+          <h3>Del meme al marco ideológico</h3>
+          <p>Una pieza breve, afilada y visual para desmontar el marco, leer la puesta en escena y abrir contexto más allá del clip.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="social" class="section">
+      <div class="social-panel">
+        <div class="eyebrow">Instagram</div>
+        <h2>Entramos por la imagen.<br>Nos quedamos por la lectura.</h2>
+        <p class="section-copy">Reels, carruseles, frases y piezas con identidad visual fuerte. Butlercore conecta teoría crítica, cultura de internet y actualidad política sin sonar a aula vacía ni a panfleto torpe.</p>
+        <div class="actions" style="justify-content:center">
+          <a class="btn primary" href="https://www.instagram.com/judith.butler.faanss/" target="_blank" rel="noreferrer">@judith.butler.faanss</a>
+          <span class="btn ghost" style="cursor:default">TikTok próximamente</span>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div>Butlercore</div>
+      <div class="footer-links">
+        <a href="#concepto">Concepto</a>
+        <a href="#areas">Áreas</a>
+        <a href="#articles">Artículos</a>
+        <a href="https://www.instagram.com/judith.butler.faanss/" target="_blank" rel="noreferrer">Instagram</a>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>
